@@ -2,6 +2,8 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-light shadow">
@@ -29,11 +31,11 @@ const Navbar = () => {
                   About
                 </NavLink>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <NavLink className="nav-link" to="/services">
                   Services
                 </NavLink>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <NavLink className="nav-link" to="/contact">
                   Contact
@@ -43,18 +45,34 @@ const Navbar = () => {
             <NavLink className="navbar-brand fw-bolder fs-4 mx-auto" to="/">
               Ghar Sewa
             </NavLink>
-            <NavLink
-              to="/login"
-              className="btn btn-outline-primary ms-auto px-4 rounded-pill"
-            >
-              <i className="fa fa-sign-in me-2"></i>Login
-            </NavLink>
-            <NavLink
-              to="/register"
-              className="btn btn-outline-primary ms-2 px-4 rounded-pill"
-            >
-              <i className="fa fa-user-plus me-2"></i>Register
-            </NavLink>
+            {user && <h3 className="mx-4">{user.username}</h3>}
+            {!user && (
+              <NavLink
+                to="/login"
+                className="btn btn-outline-primary ms-auto px-4 rounded-pill"
+              >
+                <i className="fa fa-sign-in me-2"></i>Login
+              </NavLink>
+            )}
+            {!user && (
+              <NavLink
+                to="/register"
+                className="btn btn-outline-primary ms-2 px-4 rounded-pill"
+              >
+                <i className="fa fa-user-plus me-2"></i>Register
+              </NavLink>
+            )}
+            {user && (
+              <NavLink
+                onClick={() => {
+                  localStorage.setItem("user", null);
+                  window.reload();
+                }}
+                className="btn btn-outline-primary ms-2 px-4 rounded-pill"
+              >
+                <i className="fa fa-sign-out me-2"></i>Logout
+              </NavLink>
+            )}
           </div>
         </div>
       </nav>

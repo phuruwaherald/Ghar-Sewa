@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { role } from "../constants";
+import axios from "axios";
 
 const Login = () => {
   const [user, setUser] = useState({
     email: "",
     password: "",
+    role: role[0],
   });
 
   // Handle Input
@@ -18,26 +21,24 @@ const Login = () => {
   // Handle Login
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const { email, password } = user;
+
+    const { email, password, role } = user;
     try {
-      const res = await fetch("/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      const res = await axios.post("http://localhost:3002/login", {
+        email,
+        password,
+        role,
       });
 
       if (res.status === 400 || !res) {
-        window.alert("Invalid Credentials");
+        window.alert(res.statusText);
       } else {
+        window.location.assign("/");
+        localStorage.setItem("user", JSON.stringify(res.data));
         window.alert("Login Successful");
-        window.location.reload();
       }
     } catch (error) {
+      window.alert(error.message);
       console.log(error);
     }
   };
@@ -73,9 +74,9 @@ const Login = () => {
                   value={user.email}
                   onChange={handleChange}
                 />
-                <div id="emailHelp" class="form-text">
+                {/* <div id="emailHelp" class="form-text">
                   We'll never share your email with anyone else.
-                </div>
+                </div> */}
               </div>
               <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">
@@ -89,6 +90,19 @@ const Login = () => {
                   value={user.password}
                   onChange={handleChange}
                 />
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">
+                  Role
+                </label>
+                <select
+                  className="form-select"
+                  onChange={(e) => setUser({ role: e.target.value })}
+                >
+                  {role.map((value) => {
+                    return <option>{value}</option>;
+                  })}
+                </select>
               </div>
               <div class="mb-3 form-check">
                 <input

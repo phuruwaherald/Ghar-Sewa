@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Navigate, useNavigate } from "react-router";
+import { role } from "../constants";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -8,7 +9,10 @@ const Register = () => {
   const [user, setUser] = useState({
     username: "",
     email: "",
+    phone: "",
     password: "",
+    role: role[0],
+    services: "",
   });
 
   // Handle Inputs
@@ -24,13 +28,9 @@ const Register = () => {
     event.preventDefault();
     // Object DeStructuring
     // Store Object Data into Variable
-    const { username, email, password } = user;
+    const { username, email, phone, password, role, services } = user;
     try {
-      //It is submitted on port 3000 by default
-      //which is front end but we need to
-      //submit it on backend which is on
-      // Port 3001. So we need Proxy.
-      const res = await fetch("http://localhost:3001/register", {
+      const res = await fetch("http://localhost:3002/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,16 +38,16 @@ const Register = () => {
         body: JSON.stringify({
           username,
           email,
+          phone,
           password,
+          role,
+          services,
         }),
       });
-      if (res.status === 400 || !res) {
-        window.alert("Already used details");
-      } else {
-        window.alert("Registered Successfully");
-        Navigate.push("/login");
-      }
+      window.alert("Registered Successfully");
+      navigate("/login");
     } catch (error) {
+      window.alert(error.message);
       console.log(error);
     }
   };
@@ -57,7 +57,7 @@ const Register = () => {
       <div className="container shadow my-5">
         <div className="row justify-content-end">
           <div className="col-md-5 d-flex flex-column align-items-center text-white justify-content-center form order-2">
-            <h1 className="display-4 fw-bolder">Hello, Friend</h1>
+            <h1 className="display-4 fw-bolder">Hello!</h1>
             <p className="lead text-center">Enter Your Details to Register</p>
             <h5 className="mb-4">OR</h5>
             <NavLink
@@ -82,9 +82,9 @@ const Register = () => {
                   value={user.username}
                   onChange={handleInput}
                 />
-                <div id="emailHelp" class="form-text">
+                {/* <div id="emailHelp" class="form-text">
                   We'll never share your email with anyone else.
-                </div>
+                </div> */}
               </div>
               <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">
@@ -99,9 +99,19 @@ const Register = () => {
                   value={user.email}
                   onChange={handleInput}
                 />
-                <div id="emailHelp" class="form-text">
-                  We'll never share your email with anyone else.
-                </div>
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPhone1" class="form-label">
+                  Phone number
+                </label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="exampleInputPhone1"
+                  name="phone"
+                  value={user.phone}
+                  onChange={handleInput}
+                />
               </div>
               <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">
@@ -113,6 +123,33 @@ const Register = () => {
                   id="exampleInputPassword1"
                   name="password"
                   value={user.password}
+                  onChange={handleInput}
+                />
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputRole1" class="form-label">
+                  Role
+                </label>
+                <select
+                  className="form-select"
+                  onChange={(e) => setUser({ role: e.target.value })}
+                >
+                  {role.map((value) => {
+                    return <option>{value}</option>;
+                  })}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputServices1" class="form-label">
+                  Services
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="exampleInputServices"
+                  rows="3"
+                  name="services"
+                  value={user.services}
                   onChange={handleInput}
                 />
               </div>
